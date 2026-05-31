@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "11fdbfc1-45fd-4865-8efc-b17084b7e009",
+		"name": "AshuraForge API Testleri",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50803353"
+	},
+	"item": [
+		{
+			"name": "1-Register(kayıt ol)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"test@test.com\",\r\n  \"password\": \"Password123*\",\r\n  \"username\": \"test_kullanici\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Auth/register",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2- Login (Giriş Yap)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"test@test.com\",\r\n  \"password\": \"Password123*\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Auth/login",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3- Antrenman Ekle",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Barfiks Antrenmanı\",\r\n  \"durationInMinutes\": 45,\r\n  \"difficulty\": \"Medium\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Workout",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Workout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4- Antrenman Sil",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Workout/1",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Workout",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5- Rozet Kazan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Badge/check",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Badge",
+						"check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6- Bildirim Al",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Notification",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Notification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7- Profil Fotoğrafı Değiştir",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"profileImageUrl\": \"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJdkPNNzfXQQvYT2auhVTXh3nopus1hrTe_w&s\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Profile/image",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Profile",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8- Profil Düzenle",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Ayberk\",\r\n  \"lastName\": \"Developer\",\r\n  \"bio\": \"FullstackLoneWolf\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Profile",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10- Progress Tracking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Progress",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Progress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9- Title Kazan",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9rdWxsYW5pY2kiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0QHRlc3QuY29tIiwidGl0bGUiOiJBY2VtaSBTYXZhxZ_Dp8SxIiwiZXhwIjoxNzc0NzEzNTkzLCJpc3MiOiJBc2h1cmFGb3JnZS5BUEkiLCJhdWQiOiJBc2h1cmFGb3JnZS5DbGllbnQifQ.YEhjOcdj2eo5QQYloRS7Hhr4E2bUygnyfrv7zW2V7x0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ashura-forge-production-7424.up.railway.app/api/Progress",
+					"protocol": "https",
+					"host": [
+						"ashura-forge-production-7424",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"Progress"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

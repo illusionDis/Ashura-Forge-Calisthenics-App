@@ -1,0 +1,1016 @@
+# API Tasarımı - OpenAPI Specification
+
+**OpenAPI Spesifikasyon Dosyası:** [lamine.yaml](lamine.yaml)
+
+## OpenAPI Specification
+
+```yaml
+openapi: 3.0.3
+info:
+  title: Ashura Forge API
+  version: 1.0.0
+  description: >
+    Ashura Forge sizi Calisthenics ve antrenmanın en verimli haliyle buluşturuyor.
+    Bu API, kullanıcıların antrenman takibi yapabildiği, rozet ve unvan kazanabildiği,
+    bildirim alabildiği ve profillerini yönetebildiği Ashura Forge uygulaması için
+    tasarlanmış RESTful bir servistir. JWT tabanlı kimlik doğrulama ile korunmaktadır.
+  contact:
+    name: Neşet Ayberk Alkan
+    email: nayberkalkaan@gmail.com
+
+servers:
+  - url: https://api.ashuraforge.com
+    description: Üretim sunucusu (Production)
+  - url: https://staging-api.ashuraforge.com
+    description: Test sunucusu (Staging)
+  - url: https://localhost:3000
+    description: Yerel geliştirme sunucusu (Development)
+
+tags:
+  - name: Auth
+    description: Kullanıcı kaydı ve giriş işlemleri
+  - name: Antrenmanlar
+    description: Antrenman ekleme ve silme işlemleri
+  - name: Başarılar
+    description: Rozet ve unvan kazanma işlemleri
+  - name: Bildirimler
+    description: Kullanıcı bildirimlerini görüntüleme işlemleri
+  - name: Profil
+    description: Profil fotoğrafı ve bilgilerini güncelleme işlemleri
+  - name: İlerleme
+    description: Kullanıcı ilerleme ve istatistik takibi işlemleri
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Kayıt Ol
+      operationId: registerUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        "201":
+          description: Kullanıcı başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Bu e-posta adresi zaten kayıtlı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Giriş Yap
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        "200":
+          description: Giriş başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: E-posta veya şifre hatalı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/workouts:
+    post:
+      tags:
+        - Antrenmanlar
+      summary: Antrenman Ekle
+      operationId: addWorkout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutInput'
+      responses:
+        "201":
+          description: Antrenman başarıyla eklendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workout'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/workouts/{workoutid}:
+    parameters:
+      - name: workoutid
+        in: path
+        required: true
+        description: Antrenmanın benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "wkt789"
+
+    delete:
+      tags:
+        - Antrenmanlar
+      summary: Antrenman Sil
+      operationId: deleteWorkout
+      responses:
+        "204":
+          description: Antrenman başarıyla silindi
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu işlem için yetkiniz bulunmuyor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Antrenman bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/badges:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    patch:
+      tags:
+        - Başarılar
+      summary: Rozet Kazan
+      operationId: earnBadge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadgeInput'
+      responses:
+        "200":
+          description: Rozet başarıyla kazanıldı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Badge'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Bu rozet zaten kazanılmış
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/notifications:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    get:
+      tags:
+        - Bildirimler
+      summary: Bildirimleri Al
+      operationId: getNotifications
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Sayfa numarası (varsayılan 1)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Sayfa başına sonuç sayısı (varsayılan 10, maksimum 50)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          example: 10
+        - name: isRead
+          in: query
+          required: false
+          description: Okunmuş/okunmamış bildirimleri filtrele
+          schema:
+            type: boolean
+          example: false
+      responses:
+        "200":
+          description: Bildirimler başarıyla getirildi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu işlem için yetkiniz bulunmuyor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/profile-photo:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    put:
+      tags:
+        - Profil
+      summary: Profil Fotoğrafı Değiştir
+      operationId: updateProfilePhoto
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfilePhotoInput'
+      responses:
+        "200":
+          description: Profil fotoğrafı başarıyla güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        "400":
+          description: Geçersiz dosya formatı veya boyutu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu işlem için yetkiniz bulunmuyor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/profile:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    patch:
+      tags:
+        - Profil
+      summary: Profil Düzenle
+      operationId: updateProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileInput'
+      responses:
+        "200":
+          description: Profil başarıyla güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu işlem için yetkiniz bulunmuyor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/title:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    patch:
+      tags:
+        - Başarılar
+      summary: Title Kazan
+      operationId: earnTitle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TitleInput'
+      responses:
+        "200":
+          description: Unvan başarıyla kazanıldı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Title'
+        "400":
+          description: Geçersiz istek verisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu unvanı kazanmak için gerekli koşullar sağlanamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Bu unvan zaten kazanılmış
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userid}/progress:
+    parameters:
+      - name: userid
+        in: path
+        required: true
+        description: Kullanıcının benzersiz kimlik numarası
+        schema:
+          type: string
+        example: "usr001"
+
+    get:
+      tags:
+        - İlerleme
+      summary: İlerleme Takibi
+      operationId: getProgress
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          description: Başlangıç tarihi (ISO 8601 formatında)
+          schema:
+            type: string
+            format: date
+          example: "2026-01-01"
+        - name: endDate
+          in: query
+          required: false
+          description: Bitiş tarihi (ISO 8601 formatında)
+          schema:
+            type: string
+            format: date
+          example: "2026-03-08"
+        - name: type
+          in: query
+          required: false
+          description: Antrenman türüne göre filtrele
+          schema:
+            type: string
+            enum: [cardio, strength, flexibility, all]
+            default: all
+          example: "cardio"
+      responses:
+        "200":
+          description: İlerleme verileri başarıyla getirildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+        "400":
+          description: Geçersiz tarih aralığı veya parametre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Bu işlem için yetkiniz bulunmuyor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Kullanıcı bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'JWT tabanlı kimlik doğrulama. İstek başlığına "Authorization: Bearer <token>" eklenmeli.'
+
+  schemas:
+    RegisterInput:
+      type: object
+      description: Yeni kullanıcı kaydı için gönderilecek veri
+      properties:
+        username:
+          type: string
+          description: Kullanıcı adı (benzersiz olmalı)
+          minLength: 3
+          maxLength: 30
+          example: "fitnessguru42"
+        email:
+          type: string
+          format: email
+          description: Kullanıcının e-posta adresi
+          example: "kullanici@email.com"
+        password:
+          type: string
+          format: password
+          description: Kullanıcı şifresi (en az 8 karakter)
+          minLength: 8
+          example: "Gizli1234!"
+        fullName:
+          type: string
+          description: Kullanıcının tam adı
+          minLength: 2
+          maxLength: 60
+          example: "Ahmet Yılmaz"
+      required:
+        - username
+        - email
+        - password
+
+    LoginInput:
+      type: object
+      description: Giriş yapmak için gönderilecek veri
+      properties:
+        email:
+          type: string
+          format: email
+          description: Kayıtlı e-posta adresi
+          example: "kullanici@email.com"
+        password:
+          type: string
+          format: password
+          description: Kullanıcı şifresi
+          example: "Gizli1234!"
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      description: Başarılı kimlik doğrulama sonucunda döndürülen yanıt
+      properties:
+        token:
+          type: string
+          description: JWT erişim token'ı
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          $ref: '#/components/schemas/UserProfile'
+
+    WorkoutInput:
+      type: object
+      description: Antrenman oluşturmak için gönderilecek veri
+      properties:
+        title:
+          type: string
+          description: Antrenmanın başlığı
+          minLength: 2
+          maxLength: 100
+          example: "Sabah Koşusu"
+        type:
+          type: string
+          description: Antrenman türü
+          enum: [cardio, strength, flexibility]
+          example: "cardio"
+        durationMinutes:
+          type: integer
+          description: Antrenman süresi (dakika cinsinden)
+          minimum: 1
+          maximum: 600
+          example: 45
+        caloriesBurned:
+          type: integer
+          description: Yakılan kalori miktarı (tahmini)
+          minimum: 0
+          example: 320
+        notes:
+          type: string
+          description: Antrenmanla ilgili notlar
+          maxLength: 500
+          example: "Hafif tempolu, 5km koşu"
+        date:
+          type: string
+          format: date-time
+          description: Antrenmanın gerçekleştiği tarih ve saat (ISO 8601)
+          example: "2026-03-08T07:30:00Z"
+      required:
+        - title
+        - type
+        - durationMinutes
+        - date
+
+    Workout:
+      type: object
+      description: Antrenman bilgilerini temsil eden model
+      properties:
+        _id:
+          type: string
+          description: Antrenmanın benzersiz kimlik numarası (otomatik atanır)
+          example: "wkt789"
+        userId:
+          type: string
+          description: Antrenmanı kaydeden kullanıcının kimlik numarası
+          example: "usr001"
+        title:
+          type: string
+          description: Antrenmanın başlığı
+          example: "Sabah Koşusu"
+        type:
+          type: string
+          description: Antrenman türü
+          enum: [cardio, strength, flexibility]
+          example: "cardio"
+        durationMinutes:
+          type: integer
+          description: Antrenman süresi (dakika)
+          example: 45
+        caloriesBurned:
+          type: integer
+          description: Yakılan kalori
+          example: 320
+        notes:
+          type: string
+          description: Antrenman notları
+          example: "Hafif tempolu, 5km koşu"
+        date:
+          type: string
+          format: date-time
+          description: Antrenman tarihi
+          example: "2026-03-08T07:30:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          description: Kaydın oluşturulma tarihi
+          example: "2026-03-08T08:00:00Z"
+      required:
+        - userId
+        - title
+        - type
+        - durationMinutes
+        - date
+
+    BadgeInput:
+      type: object
+      description: Rozet kazanmak için gönderilecek veri
+      properties:
+        badgeCode:
+          type: string
+          description: Kazanılacak rozetin benzersiz kodu
+          example: "FIRST_WORKOUT"
+      required:
+        - badgeCode
+
+    Badge:
+      type: object
+      description: Rozet bilgilerini temsil eden model
+      properties:
+        _id:
+          type: string
+          description: Rozetin benzersiz kimlik numarası
+          example: "bdg001"
+        code:
+          type: string
+          description: Rozetin kodu
+          example: "FIRST_WORKOUT"
+        name:
+          type: string
+          description: Rozetin adı
+          example: "İlk Adım"
+        description:
+          type: string
+          description: Rozetin kazanılma koşulu açıklaması
+          example: "İlk antrenmanını tamamladın!"
+        iconUrl:
+          type: string
+          format: uri
+          description: Rozet ikonunun URL'si
+          example: "https://cdn.ashuraforge.com/badges/first_workout.png"
+        earnedAt:
+          type: string
+          format: date-time
+          description: Rozetin kazanıldığı tarih
+          example: "2026-03-08T09:00:00Z"
+      required:
+        - code
+        - name
+        - description
+
+    Notification:
+      type: object
+      description: Bildirim bilgilerini temsil eden model
+      properties:
+        _id:
+          type: string
+          description: Bildirimin benzersiz kimlik numarası
+          example: "ntf321"
+        type:
+          type: string
+          description: Bildirim türü
+          enum: [badge, title, reminder, achievement, system]
+          example: "badge"
+        title:
+          type: string
+          description: Bildirim başlığı
+          example: "Yeni Rozet Kazandın!"
+        message:
+          type: string
+          description: Bildirim mesajı
+          example: "Tebrikler! 'İlk Adım' rozetini kazandın."
+        isRead:
+          type: boolean
+          description: Bildirimin okunup okunmadığı
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Bildirimin oluşturulma tarihi
+          example: "2026-03-08T09:00:00Z"
+      required:
+        - type
+        - title
+        - message
+        - isRead
+
+    ProfilePhotoInput:
+      type: object
+      description: Profil fotoğrafı yükleme isteği için gönderilecek veri
+      properties:
+        photo:
+          type: string
+          format: binary
+          description: Yüklenecek fotoğraf dosyası (JPEG veya PNG, max 5MB)
+      required:
+        - photo
+
+    ProfileInput:
+      type: object
+      description: Profil güncelleme isteği için gönderilecek veri
+      properties:
+        fullName:
+          type: string
+          description: Kullanıcının tam adı
+          minLength: 2
+          maxLength: 60
+          example: "Ahmet Yılmaz"
+        bio:
+          type: string
+          description: Kullanıcı biyografisi
+          maxLength: 200
+          example: "Her gün biraz daha iyi olmaya çalışıyorum."
+        fitnessGoal:
+          type: string
+          description: Kullanıcının fitness hedefi
+          enum: [weight_loss, muscle_gain, endurance, flexibility, general_fitness]
+          example: "muscle_gain"
+        birthDate:
+          type: string
+          format: date
+          description: Doğum tarihi
+          example: "1995-06-15"
+        heightCm:
+          type: integer
+          description: Boy (cm cinsinden)
+          minimum: 50
+          maximum: 250
+          example: 178
+        weightKg:
+          type: number
+          format: float
+          description: Kilo (kg cinsinden)
+          minimum: 20
+          maximum: 300
+          example: 75.5
+
+    UserProfile:
+      type: object
+      description: Kullanıcı profil bilgilerini temsil eden model
+      properties:
+        _id:
+          type: string
+          description: Kullanıcının benzersiz kimlik numarası
+          example: "usr001"
+        username:
+          type: string
+          description: Kullanıcı adı
+          example: "fitnessguru42"
+        email:
+          type: string
+          format: email
+          description: E-posta adresi
+          example: "kullanici@email.com"
+        fullName:
+          type: string
+          description: Tam ad
+          example: "Ahmet Yılmaz"
+        bio:
+          type: string
+          description: Biyografi
+          example: "Her gün biraz daha iyi olmaya çalışıyorum."
+        profilePhotoUrl:
+          type: string
+          format: uri
+          description: Profil fotoğrafının URL'si
+          example: "https://cdn.ashuraforge.com/photos/usr001.jpg"
+        fitnessGoal:
+          type: string
+          description: Fitness hedefi
+          example: "muscle_gain"
+        heightCm:
+          type: integer
+          description: Boy (cm)
+          example: 178
+        weightKg:
+          type: number
+          format: float
+          description: Kilo (kg)
+          example: 75.5
+        activeTitle:
+          type: string
+          description: Kullanıcının aktif unvanı
+          example: "Demir Yumruk"
+        badges:
+          type: array
+          description: Kazanılan rozetler
+          items:
+            $ref: '#/components/schemas/Badge'
+        createdAt:
+          type: string
+          format: date-time
+          description: Hesabın oluşturulma tarihi
+          example: "2026-01-01T10:00:00Z"
+      required:
+        - username
+        - email
+
+    TitleInput:
+      type: object
+      description: Unvan kazanmak için gönderilecek veri
+      properties:
+        titleCode:
+          type: string
+          description: Kazanılacak unvanın kodu
+          example: "IRON_FIST"
+      required:
+        - titleCode
+
+    Title:
+      type: object
+      description: Unvan bilgilerini temsil eden model
+      properties:
+        _id:
+          type: string
+          description: Unvanın benzersiz kimlik numarası
+          example: "ttl001"
+        code:
+          type: string
+          description: Unvanın kodu
+          example: "IRON_FIST"
+        name:
+          type: string
+          description: Unvanın adı
+          example: "Demir Yumruk"
+        description:
+          type: string
+          description: Unvanın kazanılma koşulu
+          example: "50 kez kuvvet antrenmanı tamamladın!"
+        requirement:
+          type: string
+          description: Unvan için gereken koşul özeti
+          example: "50 strength antrenmanı"
+        earnedAt:
+          type: string
+          format: date-time
+          description: Unvanın kazanıldığı tarih
+          example: "2026-03-08T12:00:00Z"
+      required:
+        - code
+        - name
+        - description
+
+    Progress:
+      type: object
+      description: Kullanıcı ilerleme ve istatistik verilerini temsil eden model
+      properties:
+        userId:
+          type: string
+          description: Kullanıcının kimlik numarası
+          example: "usr001"
+        totalWorkouts:
+          type: integer
+          description: Toplam tamamlanan antrenman sayısı
+          example: 87
+        totalDurationMinutes:
+          type: integer
+          description: Toplam antrenman süresi (dakika)
+          example: 3915
+        totalCaloriesBurned:
+          type: integer
+          description: Toplam yakılan kalori
+          example: 27840
+        workoutsByType:
+          type: object
+          description: Türe göre antrenman dağılımı
+          properties:
+            cardio:
+              type: integer
+              example: 40
+            strength:
+              type: integer
+              example: 35
+            flexibility:
+              type: integer
+              example: 12
+        weeklyAverage:
+          type: number
+          format: float
+          description: Haftalık ortalama antrenman sayısı
+          example: 4.2
+        currentStreak:
+          type: integer
+          description: Mevcut ardışık gün serisi
+          example: 7
+        longestStreak:
+          type: integer
+          description: En uzun ardışık gün serisi
+          example: 21
+        period:
+          type: object
+          description: Sorgunun kapsadığı tarih aralığı
+          properties:
+            startDate:
+              type: string
+              format: date
+              example: "2026-01-01"
+            endDate:
+              type: string
+              format: date
+              example: "2026-03-08"
+      required:
+        - userId
+        - totalWorkouts
+        - totalDurationMinutes
+        - totalCaloriesBurned
+
+    Error:
+      type: object
+      description: Hata durumlarında döndürülen standart hata yanıtı
+      properties:
+        message:
+          type: string
+          description: Hatayı açıklayan mesaj
+          example: "Kullanıcı bulunamadı"
+      required:
+        - message
