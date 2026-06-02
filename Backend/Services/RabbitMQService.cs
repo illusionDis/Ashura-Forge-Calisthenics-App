@@ -26,13 +26,19 @@ public class RabbitMQService : IRabbitMQService, IDisposable
 
         try
         {
+            var host = config["RabbitMQ:Host"] ?? "localhost";
+            var port = int.Parse(config["RabbitMQ:Port"] ?? "5672");
+            _logger.LogInformation("RabbitMQ bağlantısı deneniyor → {Host}:{Port}", host, port);
+
             var factory = new ConnectionFactory
             {
-                HostName = config["RabbitMQ:Host"]     ?? "localhost",
-                Port     = int.Parse(config["RabbitMQ:Port"] ?? "5672"),
+                HostName = host,
+                Port     = port,
                 UserName = config["RabbitMQ:Username"] ?? "guest",
                 Password = config["RabbitMQ:Password"] ?? "guest",
-                RequestedConnectionTimeout = TimeSpan.FromSeconds(5)
+                RequestedConnectionTimeout = TimeSpan.FromSeconds(10),
+                SocketReadTimeout          = TimeSpan.FromSeconds(10),
+                SocketWriteTimeout         = TimeSpan.FromSeconds(10)
             };
 
             _connection = factory.CreateConnection();
