@@ -85,12 +85,20 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-// ── Redis Cache ──────────────────────────────────────────────────────────────
-builder.Services.AddStackExchangeRedisCache(options =>
+// ── Redis Cache (yoksa Memory Cache fallback) ────────────────────────────────
+var redisConn = builder.Configuration["Redis:ConnectionString"] ?? "";
+if (!string.IsNullOrEmpty(redisConn) && redisConn != "localhost:6379")
 {
-    options.Configuration = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
-    options.InstanceName  = "AshuraForge_";
-});
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = redisConn;
+        options.InstanceName  = "AshuraForge_";
+    });
+}
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+}
 
 // ── RabbitMQ ─────────────────────────────────────────────────────────────────
 builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
