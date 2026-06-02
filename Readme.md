@@ -47,3 +47,15 @@ Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
 5. [Mobil Front-End](YazMuh/MobilFrontEnd.md)
 6. [Mobil Backend](YazMuh/MobilBackEnd.md)
 7. [Video Sunum](YazMuh/Sunum.md)
+
+---
+
+## Kişisel Görev Sayfaları
+
+### Neset Ayberk Alkan
+
+- [Gereksinimler (1-12)](YazMuh/Neset-Ayberk-Alkan/Neset-Ayberk-Gereksinimler.md)
+- [REST API Görevleri](YazMuh/Neset-Ayberk-Alkan/Neset-Ayberk-Alkan-Rest-API-Gorevleri.md)
+- [Web Frontend Görevleri](YazMuh/Neset-Ayberk-Alkan/Neset-Ayberk-Alkan-Web-Frontend-Gorevleri.md)
+- [Mobil Frontend Görevleri](YazMuh/Neset-Ayberk-Alkan/Neset-Ayberk-Alkan-Mobil-Frontend-Gorevleri.md)
+- [Mobil Backend Görevleri](YazMuh/Neset-Ayberk-Alkan/Neset-Ayberk-Alkan-Mobil-Backend-Gorevleri.md)
