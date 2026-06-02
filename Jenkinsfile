@@ -15,42 +15,29 @@ pipeline {
             }
         }
 
-        stage('Backend - Restore') {
+        stage('Backend - Restore & Build') {
             steps {
-                echo 'NuGet paketleri yükleniyor...'
-                sh 'dotnet restore backend/AshuraForge.API.csproj'
-            }
-        }
-
-        stage('Backend - Build') {
-            steps {
-                echo 'Backend derleniyor...'
-                sh 'dotnet build backend/AshuraForge.API.csproj --no-restore -c Release'
-            }
-        }
-
-        stage('Backend - Publish') {
-            steps {
-                echo 'Backend publish alınıyor...'
-                sh 'dotnet publish backend/AshuraForge.API.csproj -c Release -o ./publish --no-build'
-            }
-        }
-
-        stage('Frontend - Install') {
-            steps {
-                echo 'Frontend bağımlılıkları yükleniyor...'
-                dir('frontend') {
-                    sh 'npm ci'
-                }
+                echo 'Backend derleniyor (Docker ile)...'
+                sh '''
+                    docker run --rm \
+                        -v "$(pwd)/Backend:/src" \
+                        -w /src \
+                        mcr.microsoft.com/dotnet/sdk:8.0 \
+                        sh -c "dotnet restore AshuraForge.API.csproj && dotnet build AshuraForge.API.csproj -c Release --no-restore"
+                '''
             }
         }
 
         stage('Frontend - Build') {
             steps {
-                echo 'Frontend derleniyor...'
-                dir('frontend') {
-                    sh 'npm run build'
-                }
+                echo 'Frontend derleniyor (Docker ile)...'
+                sh '''
+                    docker run --rm \
+                        -v "$(pwd)/frontend:/app" \
+                        -w /app \
+                        node:20-alpine \
+                        sh -c "npm ci && npm run build"
+                '''
             }
         }
 
@@ -63,8 +50,6 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Servisler başlatılıyor...'
-                sh 'docker compose up -d --build api'
                 echo 'Deployment tamamlandı!'
             }
         }
