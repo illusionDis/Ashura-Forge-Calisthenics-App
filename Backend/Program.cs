@@ -120,6 +120,9 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
+// ── RabbitMQ bağlantısını başlangıçta kur ────────────────────────────────────
+app.Services.GetRequiredService<IRabbitMQService>();
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
