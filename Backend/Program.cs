@@ -85,14 +85,24 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
+// ── Redis Cache ──────────────────────────────────────────────────────────────
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
+    options.InstanceName  = "AshuraForge_";
+});
+
+// ── RabbitMQ ─────────────────────────────────────────────────────────────────
+builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
+
 // ── Application Services ─────────────────────────────────────────────────────
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IBadgeService, BadgeService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
 // ── Build ─────────────────────────────────────────────────────────────────────
 var app = builder.Build();

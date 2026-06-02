@@ -14,13 +14,18 @@ public interface IWorkoutService
 
 public class WorkoutService : IWorkoutService
 {
-    private readonly AppDbContext _db;
-    private readonly IBadgeService _badgeService;
+    private readonly AppDbContext        _db;
+    private readonly IBadgeService       _badgeService;
+    private readonly IRabbitMQService    _rabbitMQ;
+    private readonly INotificationService _notificationService;
 
-    public WorkoutService(AppDbContext db, IBadgeService badgeService)
+    public WorkoutService(AppDbContext db, IBadgeService badgeService,
+        IRabbitMQService rabbitMQ, INotificationService notificationService)
     {
-        _db = db;
-        _badgeService = badgeService;
+        _db                  = db;
+        _badgeService        = badgeService;
+        _rabbitMQ            = rabbitMQ;
+        _notificationService = notificationService;
     }
 
     // ── GEREKSİNİM 3: Antrenman ekle/POST ────────────────────────────────────
@@ -77,6 +82,12 @@ public class WorkoutService : IWorkoutService
 
         // Rozet kontrolü (Gereksinim 5)
         await _badgeService.CheckAndAwardBadgesAsync(userId);
+
+        // ── RabbitMQ: antrenman kaydedildi mesajı yayınla ────────────────────
+        _rabbitMQ.PublishWorkoutLogged(userId, dto.Name, dto.Category ?? "Genel", dto.DurationMinutes);
+
+        // ── Redis cache invalidate (yeni antrenman → bildirimleri yenile) ────
+        await _notificationService.InvalidateCacheAsync(userId);
 
         return MapToDto(workout);
     }
