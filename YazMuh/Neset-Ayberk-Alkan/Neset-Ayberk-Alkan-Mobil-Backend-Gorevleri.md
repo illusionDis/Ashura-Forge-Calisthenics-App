@@ -1,62 +1,86 @@
-# Ali Tutar'ın Mobil Backend Görevleri
+# Neset Ayberk Alkan'ın Mobil Backend Görevleri
 **Mobil Front-end ile Back-end Bağlanmış Test Videosu:** [Link buraya eklenecek](https://example.com)
 
-## 1. Üye Olma (Kayıt) Servisi
-- **API Endpoint:** `POST /auth/register`
-- **Görev:** Mobil uygulamada kullanıcı kayıt işlemini gerçekleştiren servis entegrasyonu
+## 1. Kayıt Ol Servisi
+- **API Endpoint:** `POST /api/Auth/register`
+- **Görev:** Mobil uygulamada yeni kullanıcı kayıt işlemini gerçekleştiren servis entegrasyonu
 - **İşlevler:**
-  - Kullanıcı bilgilerini (email, password, firstName, lastName) toplama
-  - Form validasyonu (email formatı, şifre güvenliği kontrolü)
-  - API'ye POST isteği gönderme
-  - Başarılı kayıt durumunda kullanıcıyı giriş ekranına yönlendirme
-  - Hata durumlarını yakalama ve kullanıcıya gösterilmesi (409 Conflict, 400 Bad Request)
+  - Kullanıcı bilgilerini (username, email, password) toplama
+  - API'ye POST isteği gönderme (axios kütüphanesi)
+  - Başarılı kayıt durumunda dönen JWT token'ı alarak MainScreen'e yönlendirme
+  - Hata durumlarını yakalama ve kullanıcıya gösterme
 - **Teknik Detaylar:**
-  - HTTP Client kullanımı (Retrofit/OkHttp - Android, URLSession/Alamofire - iOS)
-  - Request/Response model sınıfları oluşturma
-  - Error handling ve retry mekanizması
-  - Loading state yönetimi
+  - React Native + axios ile HTTP istek yönetimi
+  - JWT token AsyncStorage olmadan doğrudan navigation params ile taşıma
+  - API log kutusu: endpoint, istek gövdesi, durum kodu ve yanıt ekranda gösterilir
 
-## 2. Kullanıcı Bilgilerini Görüntüleme Servisi
-- **API Endpoint:** `GET /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini API'den çekip mobil uygulamada gösterme
+## 2. Giriş Yap Servisi
+- **API Endpoint:** `POST /api/Auth/login`
+- **Görev:** Kayıtlı kullanıcının e-posta ve şifresiyle mobil uygulamaya güvenli giriş yapması
+- **İşlevler:**
+  - Email ve şifre bilgilerini API'ye gönderme
+  - Başarılı girişte JWT token alarak ana ekrana yönlendirme
+  - Hatalı giriş durumunda kullanıcıya hata mesajı gösterme
+- **Teknik Detaylar:**
+  - Authorization header: `Bearer {token}` formatı
+  - API log kutusu ekranda canlı olarak görünür (endpoint, istek, durum, yanıt)
+
+## 3. Antrenman Ekle Servisi
+- **API Endpoint:** `POST /api/Workout`
+- **Görev:** Kullanıcının yeni antrenman kaydı oluşturmasını sağlayan servis entegrasyonu
+- **İşlevler:**
+  - Antrenman adı, süresi ve kategorisini API'ye gönderme
+  - Başarılı ekleme sonrası antrenman geçmişini yenileme (refreshData)
+  - RabbitMQ üzerinden "workout.logged" kuyruğuna mesaj yayınlanması (backend tarafında)
+  - Redis cache invalidasyonu (yeni antrenman sonrası bildirim cache'i temizlenir)
+- **Teknik Detaylar:**
+  - Request body: `{ name, durationMinutes, category }`
+  - Response: 201 Created + oluşturulan antrenman verisi
+  - API log kutusu ArenaTab ekranında görünür
+
+## 4. Antrenman Sil Servisi
+- **API Endpoint:** `DELETE /api/Workout/{id}`
+- **Görev:** Kullanıcının antrenman geçmişinden kayıt silmesi
+- **İşlevler:**
+  - Silme öncesi Alert dialog ile onay alma
+  - API'ye DELETE isteği gönderme
+  - Başarılı silme sonrası liste güncelleme
+- **Teknik Detaylar:**
+  - Path parametresi olarak antrenman ID'si
+  - API log kutusu işlem sonucunu gösterir
+
+## 5. Bildirim Al Servisi
+- **API Endpoint:** `GET /api/Notification`
+- **Görev:** Kullanıcıya ait bildirimleri API'den çekip NotificationsTab ekranında listeleme
 - **İşlevler:**
   - JWT token ile kimlik doğrulama
-  - Kullanıcı ID'sini kullanarak profil bilgilerini getirme
-  - Gelen veriyi parse edip UI'da gösterme
-  - Token süresi dolmuşsa refresh token ile yenileme
-  - Offline durumda cache'den veri gösterme
+  - Bildirimleri tarih sırasına göre listeleme
+  - Okunmamış bildirim sayısını alt navigasyon rozeti olarak gösterme
+  - "Tümünü Okundu İşaretle" → `PATCH /api/Notification/read-all`
+  - Redis cache: aynı kullanıcı 30 saniye içinde tekrar isterse veritabanı yerine cache'den yanıt döner
 - **Teknik Detaylar:**
-  - Authentication header ekleme (Bearer Token)
-  - Response caching stratejisi
-  - Token refresh mekanizması
-  - Error handling (401 Unauthorized, 403 Forbidden, 404 Not Found)
+  - Backend: IDistributedCache (Redis) ile `notifications:{userId}` anahtarında önbellekleme
+  - Cache HIT/MISS durumu backend loglarında izlenebilir
 
-## 3. Kullanıcı Bilgilerini Güncelleme Servisi
-- **API Endpoint:** `PUT /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini güncelleme işlemini gerçekleştirme
+## 6. Profil Getir ve Güncelle Servisi
+- **API Endpoint:** `GET /api/Profile` | `PATCH /api/Profile`
+- **Görev:** Kullanıcı profil bilgilerini çekme ve güncelleme
 - **İşlevler:**
-  - Profil düzenleme ekranından gelen verileri toplama
-  - Form validasyonu (email formatı, telefon formatı vb.)
-  - API'ye PUT isteği gönderme
-  - Başarılı güncelleme sonrası cache'i güncelleme
-  - Optimistic UI update (kullanıcı deneyimini iyileştirme)
+  - Profil bilgilerini (username, email, title, totalWorkouts, badgeCount) getirme
+  - Kullanıcı adı ve e-posta güncelleme
+  - Şifre değiştirme (currentPassword + newPassword)
 - **Teknik Detaylar:**
-  - Request body oluşturma (firstName, lastName, email, phone)
-  - Partial update desteği (yalnızca değişen alanları gönderme)
-  - Conflict resolution (eşzamanlı güncelleme durumları)
-  - Error handling ve kullanıcı bildirimleri
+  - PATCH body: `{ username?, email?, currentPassword?, newPassword? }`
+  - Hata durumları: 400 Bad Request, 401 Unauthorized
+  - API log kutusu ProfileTab ekranında görünür
 
-## 4. Kullanıcı Silme Servisi
-- **API Endpoint:** `DELETE /users/{userId}`
-- **Görev:** Kullanıcı hesabını silme işlemini gerçekleştirme
+## 7. İlerleme Takibi Servisi
+- **API Endpoint:** `GET /api/Progress`
+- **Görev:** Kullanıcının antrenman istatistiklerini ve unvan bilgisini getirme
 - **İşlevler:**
-  - Kullanıcıya silme işlemi için onay dialog'u gösterme
-  - API'ye DELETE isteği gönderme
-  - Başarılı silme sonrası local storage ve cache'i temizleme
-  - Kullanıcıyı login ekranına yönlendirme
-  - Token'ı geçersiz kılma
+  - Toplam antrenman sayısı, toplam dakika, mevcut unvan, sonraki unvan
+  - Rozet listesi ve kazanılan rozet sayısı
+  - Ana ekran açıldığında ve antrenman eklendiğinde otomatik yenileme
 - **Teknik Detaylar:**
-  - Destructive action için confirmation dialog
-  - Local data cleanup (SharedPreferences/UserDefaults, cache, database)
-  - Logout işlemi entegrasyonu
-  - Error handling (401, 403, 404)
+  - MainScreen seviyesinde fetchUserData fonksiyonu; tüm tablara prop olarak geçirilir
+  - refreshData callback'i ile her işlem sonrası senkronizasyon sağlanır

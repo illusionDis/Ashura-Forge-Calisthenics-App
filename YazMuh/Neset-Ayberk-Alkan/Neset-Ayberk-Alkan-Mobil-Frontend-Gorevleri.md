@@ -1,116 +1,103 @@
-# Ali Tutar'ın Mobil Frontend Görevleri
+# Neset Ayberk Alkan'ın Mobil Frontend Görevleri
 **Mobile Front-end Demo Videosu:** [Link buraya eklenecek](https://example.com)
 
-## 1. Üye Olma (Kayıt) Ekranı
-- **API Endpoint:** `POST /auth/register`
-- **Görev:** Kullanıcı kayıt işlemi için mobil ekran tasarımı ve implementasyonu
+## 1. Giriş (Login) Ekranı
+- **API Endpoint:** `POST /api/Auth/login`
+- **Görev:** Kullanıcının e-posta ve şifresiyle giriş yapabileceği mobil ekran
 - **UI Bileşenleri:**
-  - Email input alanı (keyboard type: email)
-  - Şifre input alanı (secure text entry, şifre gücü göstergesi)
-  - Şifre tekrar input alanı (doğrulama için)
-  - Ad (firstName) input alanı
-  - Soyad (lastName) input alanı
-  - "Kayıt Ol" butonu
-  - "Zaten hesabınız var mı? Giriş Yap" linki
-  - Loading indicator (kayıt işlemi sırasında)
-- **Form Validasyonu:**
-  - Email format kontrolü (real-time validation)
-  - Şifre güvenlik kuralları (min 8 karakter, büyük/küçük harf, rakam)
-  - Şifre eşleşme kontrolü
-  - Ad ve soyad boş olamaz kontrolü
-  - Tüm alanlar doldurulmadan buton disabled
-- **Kullanıcı Deneyimi:**
-  - Form hatalarını alan altında gösterilmesi
-  - Başarılı kayıt sonrası success mesajı ve otomatik giriş ekranına yönlendirme
-  - Hata durumlarında kullanıcı dostu mesajlar (409 Conflict: "Bu email zaten kullanılıyor")
-  - Keyboard dismiss işlevi
-  - ScrollView kullanımı (klavye açıldığında içerik kaybolmasın)
+  - ASHURA FORGE logosu (LinearGradient turuncu gradient, dumbbell ikonu)
+  - E-posta ve şifre input alanları (Ionicons ikonlu)
+  - Gradient "GİRİŞ YAP" butonu
+  - "Hesabın yok mu? Hemen oluştur" yönlendirme linki
+  - API İstek/Yanıt log kutusu (canlı endpoint, istek, durum, yanıt gösterimi)
 - **Teknik Detaylar:**
-  - Platform: Android (Jetpack Compose/XML) veya iOS (SwiftUI/UIKit)
-  - State management (form state, loading state, error state)
-  - Navigation (kayıt ekranından giriş ekranına geçiş)
-  - Accessibility desteği (content descriptions, labels)
+  - React Native + Expo SDK 54
+  - expo-linear-gradient ile turuncu gradient tasarım
+  - @expo/vector-icons (Ionicons) ile ikon kullanımı
+  - SafeAreaView + KeyboardAvoidingView + ScrollView yapısı
+  - navigation.replace('Main', { token }) ile ana ekrana geçiş
 
-## 2. Kullanıcı Profil Görüntüleme Ekranı
-- **API Endpoint:** `GET /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini görüntüleme ekranı tasarımı ve implementasyonu
+## 2. Kayıt (Register) Ekranı
+- **API Endpoint:** `POST /api/Auth/register`
+- **Görev:** Yeni kullanıcı oluşturma ekranı
 - **UI Bileşenleri:**
-  - Profil fotoğrafı alanı (placeholder veya gerçek fotoğraf)
-  - Kullanıcı adı ve soyadı (büyük başlık)
-  - Email adresi (ikonlu)
-  - Telefon numarası (ikonlu, varsa)
-  - Hesap oluşturulma tarihi
-  - "Profili Düzenle" butonu
-  - "Hesabı Sil" butonu (kırmızı, alt kısımda)
-  - Pull-to-refresh özelliği
-- **Kullanıcı Deneyimi:**
-  - Loading skeleton screen (veri yüklenirken)
-  - Empty state (veri yoksa)
-  - Error state (yükleme hatası durumunda retry butonu)
-  - Smooth scroll animasyonları
-  - Profil fotoğrafı için placeholder avatar
+  - Kullanıcı adı, e-posta ve şifre input alanları
+  - Gradient "KAYIT OL" butonu
+  - Hata mesajı kutusu (kırmızı border, uyarı ikonu)
+  - API log kutusu
 - **Teknik Detaylar:**
-  - Lazy loading (büyük profil fotoğrafları için)
-  - Image caching
-  - State management (user data, loading, error states)
-  - Navigation (profil düzenleme ekranına geçiş)
-  - Deep linking desteği (profil paylaşımı için)
+  - Başarılı kayıt sonrası direkt MainScreen'e yönlendirme
+  - ActivityIndicator ile yüklenme durumu gösterimi
 
-## 3. Kullanıcı Profil Düzenleme Ekranı
-- **API Endpoint:** `PUT /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini düzenleme ekranı tasarımı ve implementasyonu
+## 3. Ana Ekran — 4 Sekmeli Navigasyon (MainScreen)
+- **Görev:** Alt navigasyon çubuğu ile 4 sekme arasında geçiş sağlayan ana ekran
 - **UI Bileşenleri:**
-  - Profil fotoğrafı düzenleme (seçme/değiştirme butonu)
-  - Ad (firstName) input alanı (mevcut değerle dolu)
-  - Soyad (lastName) input alanı (mevcut değerle dolu)
-  - Email input alanı (mevcut değerle dolu, düzenlenebilir)
-  - Telefon numarası input alanı (mevcut değerle dolu, format maskesi)
-  - "Kaydet" butonu (sağ üst köşe veya alt kısımda)
-  - "İptal" butonu (sol üst köşe)
-  - Değişiklik yapıldığında "Kaydet" butonu aktif olur
-- **Form Validasyonu:**
-  - Email format kontrolü
-  - Telefon numarası format kontrolü (ülke kodu desteği)
-  - Real-time validation feedback
-  - Değişiklik yoksa "Kaydet" butonu disabled
-- **Kullanıcı Deneyimi:**
-  - Optimistic update (kaydet butonuna basıldığında UI anında güncellenir)
-  - Başarılı güncelleme sonrası success snackbar/toast
-  - Hata durumunda error mesajı ve değişiklikler geri alınır
-  - "İptal" butonuna basıldığında değişiklik kaybı için onay dialog'u
-  - Keyboard dismiss işlevi
+  - Header: turuncu gradient avatar, "ASHURA FORGE" başlığı, kullanıcı unvanı, online dot, çıkış butonu
+  - Alt navigasyon: Arena, Programlar, Bildirimler, Profil sekmeleri
+  - Aktif sekme LinearGradient turuncu highlight ile gösterilir
+  - Bildirimler sekmesinde okunmamış sayısı rozet olarak görünür
 - **Teknik Detaylar:**
-  - Form state management (initial values, edited values)
-  - Image picker entegrasyonu (galeri/kamera)
-  - Image compression (upload için)
-  - Navigation (geri dönüş, kaydetme sonrası profil ekranına dönüş)
-  - Unsaved changes warning
+  - useState ile activeTab yönetimi (React Navigation yerine manuel tab sistemi)
+  - GET /api/Progress ile userData çekilir; alt sekmelere prop olarak iletilir
 
-## 4. Hesap Silme Akışı
-- **API Endpoint:** `DELETE /users/{userId}`
-- **Görev:** Kullanıcı hesabını silme işlemi için UI akışı tasarımı ve implementasyonu
+## 4. Arena Sekmesi (ArenaTab)
+- **API Endpoint:** `GET /api/Progress`, `POST /api/Workout`, `DELETE /api/Workout/{id}`
+- **Görev:** Kullanıcının antrenman geçmişini görüntüleyip yeni antrenman ekleyebildiği ana sekme
 - **UI Bileşenleri:**
-  - "Hesabı Sil" butonu (profil ekranında, kırmızı renkli)
-  - Onay dialog'u (destructive action için)
-  - Şifre doğrulama ekranı (güvenlik için opsiyonel)
-  - Son onay ekranı (uyarı mesajları ile)
-  - "Emin misiniz?" dialog'u (çift onay mekanizması)
-- **Kullanıcı Deneyimi:**
-  - Destructive action için görsel uyarılar (kırmızı renk, ikonlar)
-  - Açık ve net uyarı mesajları ("Bu işlem geri alınamaz")
-  - İptal seçeneği her zaman mevcut
-  - Silme işlemi sırasında loading indicator
-  - Başarılı silme sonrası logout ve login ekranına yönlendirme
-- **Akış Adımları:**
-  1. Profil ekranında "Hesabı Sil" butonuna tıklama
-  2. İlk uyarı dialog'u gösterilmesi
-  3. Onaylandığında şifre doğrulama (opsiyonel)
-  4. Son onay ekranı (detaylı uyarılar)
-  5. Silme işlemi gerçekleştirme
-  6. Başarılı silme sonrası logout ve login ekranına yönlendirme
+  - GlowCard bileşeni: renkli glow efekti (backgroundColor + '22' ile Android uyumlu)
+  - Unvan kartı: trophy ikonu, mevcut unvan, ilerleme bar (LinearGradient), sonraki unvana kalan
+  - İstatistik kartları: toplam seans (turuncu alev) + toplam dakika (mavi saat)
+  - Rozet grid'i (varsa)
+  - Yeni antrenman formu: ad, dakika, kategori seçici (yatay scroll), gradient kaydet butonu
+  - Antrenman geçmişi listesi: her satırda dumbbell ikonu, kategori, tarih, süre, silme butonu
+  - API log kutusu
 - **Teknik Detaylar:**
-  - Dialog/Modal component kullanımı
-  - Multi-step flow yönetimi
-  - Error handling (silme başarısız olursa)
-  - Logout işlemi entegrasyonu
-  - Navigation reset (login ekranına dönüş)
+  - Pull-to-refresh (RefreshControl)
+  - Alert.alert ile silme onayı
+
+## 5. Programlar Sekmesi (ProgramsTab) + Program Oynatıcı (ProgramDetailScreen)
+- **API Endpoint:** `POST /api/Workout`
+- **Görev:** Hazır programları listeleyen sekme ve egzersiz oynatıcı ekranı
+- **UI Bileşenleri (ProgramsTab):**
+  - Yatay kaydırmalı kategori filtresi: Tümü / Strength / Balance / Flexibility
+  - Program kartları: renkli sol şerit, program adı, zorluk rozeti, süre, ilk 2 egzersiz önizleme
+  - "Programı Başlat" gradient butonu → ProgramDetailScreen'e navigation.navigate
+- **UI Bileşenleri (ProgramDetailScreen):**
+  - Geri butonu, program başlığı, zorluk ve süre bilgisi
+  - Egzersiz ilerleme barı (tamamlanan / toplam)
+  - Egzersiz listesi: her birine tap ile işaretleme (checkbox + üstü çizili animasyon)
+  - "Antrenmanı Tamamla" gradient butonu → POST /api/Workout
+  - Başarı kartı: yeşil trophy ikonu, "Ana Sayfaya Dön" butonu
+  - API log kutusu
+- **Teknik Detaylar:**
+  - 9 hazır program: 3 Strength, 3 Balance, 3 Flexibility
+  - Her program için barColor, zorluk seviyesi, egzersiz listesi tanımlı
+
+## 6. Bildirimler Sekmesi (NotificationsTab)
+- **API Endpoint:** `GET /api/Notification`, `PATCH /api/Notification/read-all`
+- **Görev:** Kullanıcıya ait bildirimleri listeleyen sekme
+- **UI Bileşenleri:**
+  - Bildirim sayısı rozeti (okunmamışlar için)
+  - "Tümünü Oku" butonu
+  - Bildirim kartları: type'a göre renk ve ikon (rozet=mor, unvan=altın, milestone=turuncu, sistem=mavi)
+  - Okunmamış bildirimlere renkli sol şerit + nokta göstergesi
+  - Tarih ve saat bilgisi
+  - Boş durum ekranı (hiç bildirim yoksa)
+  - API log kutusu
+- **Teknik Detaylar:**
+  - Pull-to-refresh desteği
+  - useCallback + useEffect ile otomatik veri çekimi
+
+## 7. Profil Sekmesi (ProfileTab)
+- **API Endpoint:** `GET /api/Profile`, `PATCH /api/Profile`
+- **Görev:** Kullanıcı profil bilgilerini görüntüleme ve düzenleme sekmesi
+- **UI Bileşenleri:**
+  - Gradient avatar dairesi, kullanıcı adı, e-posta, unvan rozeti
+  - İstatistik pill'leri: toplam seans, rozet sayısı, üyelik tarihi
+  - Profil düzenleme formu: kullanıcı adı + e-posta alanları, gradient kaydet butonu
+  - Şifre değiştirme bölümü: mevcut şifre + yeni şifre (göster/gizle toggle'ı)
+  - API log kutusu
+- **Teknik Detaylar:**
+  - GET /api/Profile ile mevcut bilgiler form'a otomatik doldurulur
+  - Şifre alanları için showPassword state yönetimi
+  - Başarılı güncelleme sonrası Alert.alert + refreshData tetiklenir
